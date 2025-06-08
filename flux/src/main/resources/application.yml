@@ -1,0 +1,10 @@
+
+
+spring:
+  application:
+    name: flux
+  security:
+    oauth2:
+      resourceserver:
+        opaque-token:
+          issuer-uri: http://localhost:8081/oauth2/introspect
