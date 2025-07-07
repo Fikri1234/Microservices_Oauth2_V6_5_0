@@ -21,6 +21,14 @@ public class BadCredentialExceptionHandler extends BadCredentialsException {
 
 	public BadCredentialExceptionHandler(String message) {
 		super(message);
+
+		ObjectMessageResponse msg = new ObjectMessageResponse();
+		msg.setMessage(message);
+		ObjectApiResponse dto = new ObjectApiResponse();
+		dto.setStatus(MethodMessage.MSG_USER_BAD_CREDENTIAL.getStatus().getEn());
+		dto.setMessage(MethodMessage.MSG_USER_BAD_CREDENTIAL.getEn());
+		dto.setData(msg);
+		new ResponseEntity<>(dto, HttpStatus.OK);
 	}
 	
 	public BadCredentialExceptionHandler(String message, Throwable throwable) {

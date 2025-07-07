@@ -22,6 +22,13 @@ public class AuthenticationExceptionHandler extends AuthenticationException {
 
     public AuthenticationExceptionHandler(String message) {
         super(message);
+        ObjectMessageResponse msg = new ObjectMessageResponse();
+        msg.setMessage(message);
+        ObjectApiResponse dto = new ObjectApiResponse();
+        dto.setStatus(MethodMessage.MSG_USER_UNAUTHORIZED.getStatus().getEn());
+        dto.setMessage(MethodMessage.MSG_USER_UNAUTHORIZED.getEn());
+        dto.setData(msg);
+        new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     public AuthenticationExceptionHandler(String message, Throwable throwable) {

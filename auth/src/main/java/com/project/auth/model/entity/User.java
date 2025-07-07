@@ -23,6 +23,8 @@ import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -51,7 +53,8 @@ public class User extends BaseEntity {
     String lastName;
     String email;
     @Enumerated(EnumType.STRING)
-    @Column(name = "gender", columnDefinition = "ENUM('MALE', 'FEMALE')")
+    @Column(name = "gender", columnDefinition = "gender_enum")
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
     GenderEnum gender;
     String resetToken;
 

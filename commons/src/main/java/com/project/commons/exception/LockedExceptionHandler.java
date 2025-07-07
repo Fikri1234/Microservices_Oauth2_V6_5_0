@@ -21,6 +21,15 @@ public class LockedExceptionHandler extends LockedException {
 
 	public LockedExceptionHandler(String message) {
 		super(message);
+
+		ObjectMessageResponse msg = new ObjectMessageResponse();
+		msg.setMessage(message);
+
+		ObjectApiResponse dto = new ObjectApiResponse();
+		dto.setStatus(MethodMessage.MSG_USER_LOCKED.getStatus().getEn());
+		dto.setMessage(MethodMessage.MSG_USER_LOCKED.getEn());
+		dto.setData(msg);
+		new ResponseEntity<>(dto, HttpStatus.OK);
 	}
 	
 	public LockedExceptionHandler(String message, Throwable throwable) {

@@ -1,19 +1,4 @@
-server:
-  port:
-    ${SERVER_PORT:8081}
-  servlet:
-    session:
-      timeout: 15m # 15 minutes, remove this line if you want the default session timeout [sessionManagement in security config]
-#      cookie:
-#        name: AUTH_SERVER_SESSION_ID
-
 spring:
-  profiles:
-    active: dev
-  application:
-    name: auth-service
-  liquibase:
-    change-log: classpath:/db/changelog/db-changelog.xml
   datasource:
     url: jdbc:postgresql://localhost:5433/core_db
     username: postgres
@@ -28,6 +13,7 @@ spring:
       hibernate.show_sql: false
       hibernate.format_sql: false
       hibernate.use_sql_comments: false
+#      hibernate.type.enum_type_handling: pg_enum
       hibernate.naming:
         physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
         implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
@@ -43,10 +29,9 @@ spring:
         issuer-uri: http://localhost:${server.port}
         token:
           access-token-format: opaque
-
 cookie:
-  http-only: true # enable for production (HTTP-Only)
-  secure: true # enable for production (HTTPS)
+  http-only: false # for dev only
+  secure: false # for dev only
   path: /
 
 logging:
@@ -58,6 +43,7 @@ logging:
 #        type.descriptor.sql.BasicBinder: TRACE
 #        bind: TRACE   # Add this to see bind parameter values
       springframework:
+        data.jpa.repository: DEBUG # This is for Spring Data JPA repositories
         security: DEBUG # This sets DEBUG for all of org.springframework.security.*
         oauth2: # This covers org.springframework.security.oauth2.*
           server:

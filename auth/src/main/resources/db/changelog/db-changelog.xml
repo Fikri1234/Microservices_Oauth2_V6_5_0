@@ -144,6 +144,25 @@
             <column name="ADDITIONAL_INFORMATION" value='{"platform":"web-testing2"}'/>
         </insert>
     </changeSet>
+    <!-- Insert BE flux -->
+    <changeSet id="9" author="Fikri">
+        <insert  tableName="OAUTH_CLIENT_DETAILS">
+            <column name="CLIENT_ID" value="flux_be_1"/>
+            <column name="RESOURCE_IDS" value="be_1"/>
+            <column name="CLIENT_SECRET" value="pass_flux_be_1"/>
+            <column name="SCOPES" value="read"/>
+            <column name="CLIENT_AUTHENTICATION_METHODS" value="client_secret_basic"/>
+            <column name="AUTHORIZED_GRANT_TYPES" value="authorization_code,client_credentials,refresh_token"/>
+            <column name="WEB_SERVER_REDIRECT_URIS"
+                    value="http://localhost:8082/login/oauth2/code/flux_be_1"/>
+            <column name="AUTHORITIES" value="ROLE_SYSTEM"/>
+            <column name="ACCESS_TOKEN_VALIDITY" valueNumeric="300"/>
+            <column name="REFRESH_TOKEN_VALIDITY" valueNumeric="3600"/>
+            <column name="ADDITIONAL_INFORMATION" value='{"platform":"web"}'/>
+        </insert>
+    </changeSet>
+
+    <!-- Insert YOUR Google Auth -->
 
     <changeSet id="create-user-table" author="Fikri">
         <!-- Create ENUM type for Gender in PostgreSQL -->

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public enum GenderEnum {
 
     MALE("Male", "Laki-laki"),
-    FEMMALE("Female", "Perempuan"),
+    FEMALE("Female", "Perempuan"),
     ;
 
     private String nameEn;

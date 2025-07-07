@@ -37,22 +37,17 @@ public class DatabaseClientRegistrationRepository implements ClientRegistrationR
     }
 
     private ClientRegistration toClientRegistration(OAuthClientDetails entity) {
-        Function<String, String[]> splitAndTrim = s -> {
-            if (s == null || s.trim().isEmpty()) {
-                return new String[0];
-            }
-            return Arrays.stream(s.split(","))
-                    .map(String::trim)
-                    .filter(str -> !str.isEmpty())
-                    .toArray(String[]::new);
-        };
 
-        String[] grantTypes = splitAndTrim.apply(entity.getAuthorizedGrantTypes());
-        String[] authMethods = splitAndTrim.apply(entity.getClientAuthenticationMethods());
-        String[] scopes = splitAndTrim.apply(entity.getScopes());
+        if (entity.getClientId() == null || entity.getClientId().isEmpty()) {
+            throw new IllegalArgumentException("Client ID must not be null or empty");
+        }
 
-        String[] redirectUris = splitAndTrim.apply(entity.getWebServerRedirectUris());
-        String redirectUri = redirectUris.length > 0 ? redirectUris[0] : ""; // fallback if empty
+        String[] grantTypes = splitAndTrim(entity.getAuthorizedGrantTypes());
+        String[] authMethods = splitAndTrim(entity.getClientAuthenticationMethods());
+        String[] scopes = splitAndTrim(entity.getScopes());
+
+        String[] redirectUris = splitAndTrim(entity.getWebServerRedirectUris());
+        String redirectUri = redirectUris.length > 0 ? redirectUris[0] : "{baseUrl}/login/oauth2/code/{registrationId}"; // fallback if empty
 
         // Use first auth method and grant type if available
         ClientAuthenticationMethod authMethod = authMethods.length > 0
@@ -63,22 +58,38 @@ public class DatabaseClientRegistrationRepository implements ClientRegistrationR
                 ? new AuthorizationGrantType(grantTypes[0])
                 : new AuthorizationGrantType("authorization_code"); // default fallback
 
-//        return ClientRegistration.withRegistrationId(entity.getId())
-        return ClientRegistration.withRegistrationId(entity.getClientId())
+        ClientRegistration.Builder builder = ClientRegistration.withRegistrationId(entity.getClientId())
                 .clientId(entity.getClientId())
-                .clientName(entity.getClientId())
+                .clientName(entity.getResourceIds())
                 .clientSecret(entity.getClientSecret())
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
+                .clientAuthenticationMethod(authMethod)
                 .authorizationGrantType(grantType)
                 .redirectUri("{baseUrl}/login/oauth2/code/{registrationId}")
-//                .redirectUri("{baseUrl}/login/oauth2/code/" + entity.getClientId())
+//                .redirectUri("{baseUrl}/login/oauth2/code/"  entity.getClientId())
                 .scope(scopes)
                 .authorizationUri("http://localhost:8081/oauth2/authorize")
                 .tokenUri("http://localhost:8081/oauth2/token")
-                .userInfoUri("http://localhost:8081/userinfo") // Optional if OpenID Connect
+                .userInfoUri("http://localhost:8081/auth/userinfo") // Optional if OpenID Connect
                 .userInfoAuthenticationMethod(AuthenticationMethod.HEADER)
                 .userNameAttributeName(IdTokenClaimNames.SUB) // required if OpenID Connect
-                .build();
+                ;
+
+        if (entity.getClientId().toLowerCase().contains("google")) {
+            builder
+                    .authorizationUri("https://accounts.google.com/o/oauth2/v2/auth")
+                    .tokenUri("https://oauth2.googleapis.com/token")
+                    .userInfoUri("https://www.googleapis.com/oauth2/v3/userinfo")
+                    .jwkSetUri("https://www.googleapis.com/oauth2/v3/certs");
+        } else if (entity.getClientId().toLowerCase().contains("facebook")) {
+            builder
+                    .authorizationUri("https://www.facebook.com/v10.0/dialog/oauth")
+                    .tokenUri("https://graph.facebook.com/v10.0/oauth/access_token")
+                    .userInfoUri("https://graph.facebook.com/me?fields=id,name,email")
+                    .jwkSetUri(null); // Facebook doesn't use JWKs
+        }
+
+        return builder.build();
     }
 
     private String[] splitAndTrim(String s) {

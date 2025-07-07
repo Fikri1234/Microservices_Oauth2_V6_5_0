@@ -18,6 +18,9 @@ import org.springframework.security.oauth2.client.web.AuthorizationRequestReposi
 import org.springframework.security.oauth2.client.web.HttpSessionOAuth2AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.Arrays;
 
 /**
  * Created by user on 4:11 22/05/2025, 2025
@@ -54,20 +57,28 @@ public class SecurityConfiguration {
                         )
                         .failureHandler((request, response, exception) -> {
                             exception.printStackTrace(); // or use a logger
-//                            response.sendRedirect("/login?error");
+//                            response.sendRedirect("http://localhost:8002/login?error"); // TODO Frontend login error
                         })
                         .defaultSuccessUrl("/", true) // Redirect to "/" after success
 //                        .successHandler((request, response, authentication) -> {
-//                            response.sendRedirect("http://localhost:9000"); // Frontend redirection
+//                            response.sendRedirect("http://localhost:8002"); // TODO Frontend Home redirection
 //                        })
                         .authorizationEndpoint(authorization -> authorization
                                 .authorizationRequestRepository(authorizationRequestRepository())
                         )
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/")
+                        .logoutSuccessUrl("/") // TODO Frontend logout
                         .permitAll()
                 )
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration configuration = new CorsConfiguration();
+                    configuration.setAllowedOrigins(Arrays.asList("*"));
+                    configuration.setAllowedMethods(Arrays.asList("*"));
+                    configuration.setAllowedHeaders(Arrays.asList("*"));
+                    configuration.setAllowCredentials(true);
+                    return configuration;
+                }))
                 .httpBasic(Customizer.withDefaults())
 //                .csrf(csrf -> csrf.disable())
         ;

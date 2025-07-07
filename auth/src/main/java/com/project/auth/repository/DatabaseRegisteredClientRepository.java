@@ -47,8 +47,6 @@ public class DatabaseRegisteredClientRepository implements RegisteredClientRepos
     }
 
     private RegisteredClient toRegisteredClient(OAuthClientDetails clientDetails) {
-//        return RegisteredClient.withId(clientDetails.getId())
-        String ss = passwordEncoder.encode("bcrypt_service1");
         String clientSecret = passwordEncoder.encode(clientDetails.getClientSecret());
         System.out.println("Converting OAuthClientDetails secret: " + clientDetails.getClientSecret());
         System.out.println("Encoded secret: " + clientSecret);
