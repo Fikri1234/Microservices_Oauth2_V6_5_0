@@ -1,0 +1,72 @@
+server:
+  port:
+    ${SERVER_PORT:8082}
+  servlet:
+    session:
+      timeout: 15m # 15 minutes, remove this line if you want the default session timeout [sessionManagement in security config]
+#      cookie:
+#        name: AUTH_SERVER_SESSION_ID
+      cookie:
+        same-site: lax
+#        same-site: None
+#          secure: 'true  # only works over HTTPS'
+
+
+spring:
+  application:
+    name: client-service
+#  liquibase:
+#    change-log: classpath:/changelog/db-changelog.xml
+  datasource:
+    url: jdbc:postgresql://localhost:5433/core_db
+    username: postgres
+    password: Bi$mill4h
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false     # enable this to show the generated SQL in the console
+    properties:
+      #      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate.format_sql: true
+      hibernate.use_sql_comments: true
+      hibernate.naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+
+  session:
+    store-type: jdbc
+#    store-type: redis
+#    redis:
+#      host: localhost
+#      port: 32768 #06379
+  security:
+    oauth2:
+      client:
+        registration: {}
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          enabled: false  # We're using opaque tokens
+#      authorizationserver:
+#        issuer-uri: http://localhost:${server.port}
+#        token:
+#          access-token-format: opaque
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG # This applies to all org.springframework.security.*
+        oauth2: DEBUG   # Corrected: org.springframework.security.oauth2
+        web: # This 'web' is a sibling of 'security' under 'springframework'
+          filter:
+            OncePerRequestFilter: DEBUG
+          client: # Corrected: org.springframework.web.client
+            RestTemplate: DEBUG
+
+    com:
+      zaxxer:
+        hikari: DEBUG
+

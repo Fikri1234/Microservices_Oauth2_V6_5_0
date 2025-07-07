@@ -1,0 +1,73 @@
+server:
+  port:
+    ${SERVER_PORT:8081}
+  servlet:
+    session:
+      timeout: 15m # 15 minutes, remove this line if you want the default session timeout [sessionManagement in security config]
+#      cookie:
+#        name: AUTH_SERVER_SESSION_ID
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: auth-service
+  liquibase:
+    change-log: classpath:/db/changelog/db-changelog.xml
+  datasource:
+    url: jdbc:postgresql://localhost:5433/core_db
+    username: postgres
+    password: Bi$mill4h
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false     # enable this to show the generated SQL in the console
+    properties:
+#      hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+      hibernate.show_sql: false
+      hibernate.format_sql: false
+      hibernate.use_sql_comments: false
+      hibernate.naming:
+        physical-strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+
+  security:
+    oauth2:
+      client:
+        provider: { } # intentionally left empty, all from DB
+      resourceserver:
+        jwt:
+          enabled: false  # We're using opaque tokens
+      authorizationserver:
+        issuer-uri: http://localhost:${server.port}
+        token:
+          access-token-format: opaque
+
+cookie:
+  http-only: true # enable for production (HTTP-Only)
+  secure: true # enable for production (HTTPS)
+  path: /
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+        generate_statistics: DEBUG
+#        type.descriptor.sql.BasicBinder: TRACE
+#        bind: TRACE   # Add this to see bind parameter values
+      springframework:
+        security: DEBUG # This sets DEBUG for all of org.springframework.security.*
+        oauth2: # This covers org.springframework.security.oauth2.*
+          server:
+            authorization: DEBUG # This is specific for org.springframework.security.oauth2.server.authorization.*
+        web: # This 'web' is a sibling of 'security' under 'springframework'
+          filter:
+            OncePerRequestFilter: DEBUG
+          client: # This corresponds to 'org.springframework.web.client'
+            RestTemplate: DEBUG
+
+    com:
+      zaxxer:
+        hikari: DEBUG

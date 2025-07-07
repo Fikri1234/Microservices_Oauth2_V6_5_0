@@ -1,0 +1,25 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-oauth2-authorized-client-table" author="Fikri">
+        <createTable tableName="oauth2_authorized_client">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="client_registration_id" type="VARCHAR(255)"/>
+            <column name="principal_name" type="VARCHAR(255)"/>
+            <column name="access_token_value" type="TEXT"/>
+            <column name="access_token_issued_at" type="TIMESTAMP"/>
+            <column name="access_token_expires_at" type="TIMESTAMP"/>
+            <column name="access_token_type" type="VARCHAR(50)"/>
+            <column name="access_token_scopes" type="TEXT"/>
+            <column name="refresh_token_value" type="TEXT"/>
+            <column name="refresh_token_issued_at" type="TIMESTAMP"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
